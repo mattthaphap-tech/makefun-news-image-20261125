@@ -1,10 +1,10 @@
-# Sum up 25 November's world news in one image
+# Wednesday 25 November 2026 — 37 stories, 7 regions: Kyiv hits Russian ship, Houthis strike Riyadh tower, Asian stocks tumble
 
 [![make.fun · news-image-20261125](https://make.fun/badge/news-image-20261125.svg)](https://make.fun/bounty/news-image-20261125?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 [![rank](https://make.fun/badge/news-image-20261125/mattthaphap-tech/makefun-news-image-20261125/rank.svg)](https://make.fun/bounty/news-image-20261125/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 [![reward](https://make.fun/badge/news-image-20261125/mattthaphap-tech/makefun-news-image-20261125/reward.svg)](https://make.fun/bounty/news-image-20261125?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 
-make.fun bounty entry — "Sum up 25 November's world news in one image"
+make.fun bounty entry — "Wednesday 25 November 2026 — 37 stories, 7 regions: Kyiv hits Russian ship, Houthis strike Riyadh tower, Asian stocks tumble"
 ($100, ends 27 Nov 2026 07:00 WIB). Bounty: https://make.fun/bounty/news-image-20261125
 
 ## The image
@@ -12,7 +12,7 @@ make.fun bounty entry — "Sum up 25 November's world news in one image"
 `entry.png` — a 1024×1024 dense front page summarising Wednesday
 25 November 2026 in **37 stories**, built the way the previous daily
 winners are built (18 Nov: 51 stories, 1st place; 19 Nov: 37 stories,
-1st place; 22 Nov v5: 37 stories, 97.1%): a masthead with the date
+1st place; 22 Nov v5: 37 stories, 97.1% dev-board win rate): a masthead with the date
 prominent, a numbers strip, 3 illustrated leads, 10 richly illustrated
 minis, 24 one-line briefs, a date-check box and a sources footer. Every
 story carries a region tag and a CONFIRMED / REPORTED status.
