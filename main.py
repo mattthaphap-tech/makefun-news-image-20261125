@@ -1,65 +1,77 @@
-#!/usr/bin/env python3
-"""make.fun entry: Sum up 25 November's world news in one image.
+"""Deliver the finished front page to the harness output directory.
 
-Writes the bundled front-page image to /output/entry.png.
-Deterministic: no network, no randomness, same bytes on every run.
-Requires Python 3.13, standard library only.
-
-The output directory defaults to /output (the grader's writable
-directory) and can be overridden with the MAKEFUN_OUTPUT_DIR
-environment variable, which is how the entry is tested locally.
-
-After copying, the destination is verified against the source
-(size and sha256) so a truncated or corrupted copy fails loudly
-instead of silently shipping a broken image.
+Entry: make.fun news-image-20261125 — "Wednesday 25 November 2026 —
+37 stories, 7 regions: Kyiv hits Russian ship, Houthis strike Riyadh
+tower, Asian stocks tumble". The newspaper image itself (entry.png) is
+drawn by build_25nov.py; this script only delivers it. It copies
+entry.png to /output/entry.png, then proves the copy is byte-identical
+by comparing the file size and the SHA-256 digest of source and
+destination, both computed fresh at run time.
 """
+
 import hashlib
 import os
 import shutil
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "entry.png")
-DST_DIR = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-DST = os.path.join(DST_DIR, "entry.png")
-
-PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
+SOURCE = "entry.png"
+OUTPUT_DIR = "/output"
+TARGET = os.path.join(OUTPUT_DIR, "entry.png")
+CHUNK_SIZE = 1024 * 1024
 
 
-def _is_png(path):
-    with open(path, "rb") as f:
-        return f.read(8) == PNG_MAGIC
+def digest_file(path):
+    """Return the hex SHA-256 digest of the file at path."""
+    hasher = hashlib.sha256()
+    with open(path, "rb") as handle:
+        while True:
+            chunk = handle.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
-def _sha256(path):
-    digest = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def abort(message):
+    """Print an error and exit non-zero."""
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(1)
 
 
 def main():
-    if not os.path.isfile(SRC):
-        print(f"missing source image: {SRC}", file=sys.stderr)
-        return 1
-    if not _is_png(SRC):
-        print(f"source image is not a PNG: {SRC}", file=sys.stderr)
-        return 1
-    os.makedirs(DST_DIR, exist_ok=True)
-    shutil.copyfile(SRC, DST)
-    src_size = os.path.getsize(SRC)
-    dst_size = os.path.getsize(DST)
-    if src_size != dst_size:
-        print(f"size mismatch after copy: {src_size} != {dst_size}",
-              file=sys.stderr)
-        return 1
-    if _sha256(SRC) != _sha256(DST):
-        print("sha256 mismatch after copy", file=sys.stderr)
-        return 1
-    print(f"wrote {DST} ({dst_size} bytes, sha256 {_sha256(DST)[:16]}...)")
-    return 0
+    if not os.path.isfile(SOURCE):
+        abort(f"source image not found: {SOURCE}")
+
+    try:
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
+    except OSError as exc:
+        abort(f"cannot create output directory {OUTPUT_DIR}: {exc}")
+
+    try:
+        shutil.copyfile(SOURCE, TARGET)
+    except OSError as exc:
+        abort(f"copy failed ({SOURCE} -> {TARGET}): {exc}")
+
+    source_size = os.path.getsize(SOURCE)
+    target_size = os.path.getsize(TARGET)
+    if source_size != target_size:
+        abort(
+            f"size mismatch: source {source_size} bytes, "
+            f"copy {target_size} bytes"
+        )
+
+    source_hash = digest_file(SOURCE)
+    target_hash = digest_file(TARGET)
+    if source_hash != target_hash:
+        abort(
+            f"SHA-256 mismatch: source {source_hash}, copy {target_hash}"
+        )
+
+    print(
+        f"ok: {TARGET} written and verified "
+        f"({target_size} bytes, sha256 {target_hash})"
+    )
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
